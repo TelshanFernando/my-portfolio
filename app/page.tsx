@@ -202,9 +202,9 @@ export default async function Home() {
           <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-28">
             <div className="grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
               <div className="flex justify-center lg:justify-start">
-                {profile.avatar_url ? (
+                {profile.profile_image_url ? (
                   <img
-                    src={String(profile.avatar_url)}
+                    src={String(profile.profile_image_url)}
                     alt={name}
                     loading="lazy"
                     className="h-64 w-64 rounded-3xl border border-white/10 object-cover shadow-2xl sm:h-80 sm:w-80"
