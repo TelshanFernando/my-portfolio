@@ -1,0 +1,176 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { deleteService } from "./actions";
+import ServiceForm from "@/components/admin/services/ServiceForm";
+
+export type Service = {
+  id: string;
+  title: string;
+  description: string | null;
+  icon_name: string | null;
+  price: string | null;
+  display_order: number;
+  visible: boolean;
+};
+
+export default function ServiceClient({
+  initialServices,
+}: {
+  initialServices: Service[];
+}) {
+  const router = useRouter();
+
+  const [services, setServices] = useState(initialServices);
+  const [editing, setEditing] = useState<Service | undefined>();
+  const [showForm, setShowForm] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditing(undefined);
+    router.refresh();
+  };
+
+  const handleDelete = async (service: Service) => {
+    if (
+      !window.confirm(
+        `Delete service "${service.title}"? This cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+
+    setDeletingId(service.id);
+
+    try {
+      const result = await deleteService(service.id);
+
+      if (result.error) {
+        window.alert(result.error);
+        return;
+      }
+
+      setServices((current) =>
+        current.filter((item) => item.id !== service.id),
+      );
+
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      window.alert("Failed to delete service.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  return (
+    <section className="space-y-6">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-white">Services</h1>
+          <p className="mt-1 text-sm text-zinc-400">
+            Manage services displayed on your portfolio.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setEditing(undefined);
+            setShowForm(true);
+          }}
+          className="rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-zinc-200"
+        >
+          + Add Service
+        </button>
+      </header>
+
+      {showForm && (
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <h2 className="mb-6 text-xl font-semibold text-white">
+            {editing ? "Edit Service" : "Add Service"}
+          </h2>
+
+          <ServiceForm
+            service={editing}
+            onDone={closeForm}
+          />
+        </div>
+      )}
+
+      {services.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-zinc-800 p-12 text-center">
+          <h2 className="text-lg font-semibold text-white">
+            No services yet
+          </h2>
+
+          <p className="mt-2 text-sm text-zinc-400">
+            Add your first service.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {services.map((service) => (
+            <article
+              key={service.id}
+              className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6"
+            >
+              <div className="flex flex-col gap-4 md:flex-row md:justify-between">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-semibold text-white">
+                      {service.title}
+                    </h2>
+
+                    <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-400">
+                      {service.visible ? "Visible" : "Hidden"}
+                    </span>
+                  </div>
+
+                  {service.description && (
+                    <p className="mt-2 text-zinc-300">
+                      {service.description}
+                    </p>
+                  )}
+
+                  {service.price && (
+                    <p className="mt-2 text-sm text-zinc-500">
+                      {service.price}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditing(service);
+                      setShowForm(true);
+                    }}
+                    disabled={deletingId === service.id}
+                    className="rounded-lg border border-zinc-700 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-900 disabled:opacity-50"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(service)}
+                    disabled={deletingId === service.id}
+                    className="rounded-lg border border-red-900 px-4 py-2 text-sm text-red-400 hover:bg-red-950/40 disabled:opacity-50"
+                  >
+                    {deletingId === service.id
+                      ? "Deleting..."
+                      : "Delete"}
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}

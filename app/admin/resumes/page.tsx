@@ -1,33 +1,41 @@
 import { createClient } from "@/lib/supabase/server";
+import ResumeClient from "./ResumeClient";
 
-export default async function ProjectsPage() {
+export type Resume = {
+  id: string;
+  title: string;
+  file_url: string;
+  storage_path: string;
+  original_file_name: string;
+  mime_type: string;
+  file_size: number;
+  is_active: boolean;
+  created_at: string;
+};
+
+export default async function ResumesPage() {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("resumes")//
+    .from("resumes")
     .select("*")
     .order("created_at", { ascending: false });
 
-  return (
-    <div>
-      <h1 className="text-3xl font-bold">Projects</h1>
+  if (error) {
+    return (
+      <section className="space-y-6">
+        <div className="rounded-2xl border border-red-900 bg-red-950/30 p-6">
+          <h1 className="text-lg font-semibold text-red-400">
+            Failed to load resumes
+          </h1>
 
-      {error ? (
-        <p className="mt-6 text-red-400">{error.message}</p>
-      ) : (
-        <div className="mt-8 space-y-3">
-          {data?.map((project) => (
-            <div
-              key={project.id}
-              className="rounded-xl border border-zinc-800 bg-zinc-950 p-5"
-            >
-              <pre className="overflow-auto text-sm text-zinc-400">
-                {JSON.stringify(project, null, 2)}
-              </pre>
-            </div>
-          ))}
+          <p className="mt-2 text-sm text-red-300">
+            {error.message}
+          </p>
         </div>
-      )}
-    </div>
-  );
+      </section>
+    );
+  }
+
+  return <ResumeClient initialResumes={data ?? []} />;
 }

@@ -1,33 +1,22 @@
 import { createClient } from "@/lib/supabase/server";
+import SocialLinkClient from "./SocialLinkClient";
 
-export default async function ProjectsPage() {
+export default async function SocialLinksPage() {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("social_links")//
+    .from("social_links")
     .select("*")
+    .order("display_order", { ascending: true })
     .order("created_at", { ascending: false });
 
-  return (
-    <div>
-      <h1 className="text-3xl font-bold">Projects</h1>
+  if (error) {
+    return (
+      <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-6 text-red-400">
+        Failed to load social links: {error.message}
+      </div>
+    );
+  }
 
-      {error ? (
-        <p className="mt-6 text-red-400">{error.message}</p>
-      ) : (
-        <div className="mt-8 space-y-3">
-          {data?.map((project) => (
-            <div
-              key={project.id}
-              className="rounded-xl border border-zinc-800 bg-zinc-950 p-5"
-            >
-              <pre className="overflow-auto text-sm text-zinc-400">
-                {JSON.stringify(project, null, 2)}
-              </pre>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+  return <SocialLinkClient initialSocialLinks={data ?? []} />;
 }

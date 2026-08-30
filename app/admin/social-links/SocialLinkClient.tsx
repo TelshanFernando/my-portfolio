@@ -1,0 +1,170 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { deleteSocialLink } from "./actions";
+import SocialLinkForm from "./SocialLinkForm";
+
+export type SocialLink = {
+  id: string;
+  platform: string;
+  url: string;
+  icon: string | null;
+  display_order: number;
+  visible: boolean;
+};
+
+export default function SocialLinkClient({
+  initialSocialLinks,
+}: {
+  initialSocialLinks: SocialLink[];
+}) {
+  const router = useRouter();
+
+  const [links, setLinks] = useState(initialSocialLinks);
+  const [editing, setEditing] = useState<SocialLink | undefined>();
+  const [showForm, setShowForm] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditing(undefined);
+    router.refresh();
+  };
+
+  const handleDelete = async (link: SocialLink) => {
+    if (
+      !window.confirm(
+        `Delete "${link.platform}" social link?`,
+      )
+    ) {
+      return;
+    }
+
+    setDeletingId(link.id);
+
+    try {
+      const result = await deleteSocialLink(link.id);
+
+      if (result.error) {
+        window.alert(result.error);
+        return;
+      }
+
+      setLinks((current) =>
+        current.filter((item) => item.id !== link.id),
+      );
+
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      window.alert("Failed to delete social link.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  return (
+    <section className="space-y-6">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-white">
+            Social Links
+          </h1>
+
+          <p className="mt-1 text-sm text-zinc-400">
+            Manage your portfolio social links.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setEditing(undefined);
+            setShowForm(true);
+          }}
+          className="rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-zinc-200"
+        >
+          + Add Social Link
+        </button>
+      </header>
+
+      {showForm && (
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <h2 className="mb-6 text-xl font-semibold text-white">
+            {editing ? "Edit Social Link" : "Add Social Link"}
+          </h2>
+
+          <SocialLinkForm
+            socialLink={editing}
+            onDone={closeForm}
+          />
+        </div>
+      )}
+
+      {links.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-zinc-800 p-12 text-center">
+          <h2 className="text-lg font-semibold text-white">
+            No social links yet
+          </h2>
+
+          <p className="mt-2 text-sm text-zinc-400">
+            Add your first social link.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {links.map((link) => (
+            <article
+              key={link.id}
+              className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6"
+            >
+              <div className="flex flex-col gap-4 md:flex-row md:justify-between">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-semibold text-white">
+                      {link.platform}
+                    </h2>
+
+                    <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-400">
+                      {link.visible ? "Visible" : "Hidden"}
+                    </span>
+                  </div>
+
+                  <p className="mt-2 break-all text-sm text-zinc-400">
+                    {link.url}
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditing(link);
+                      setShowForm(true);
+                    }}
+                    disabled={deletingId === link.id}
+                    className="rounded-lg border border-zinc-700 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-900 disabled:opacity-50"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={deletingId === link.id}
+                    onClick={() => handleDelete(link)}
+                    className="rounded-lg border border-red-900 px-4 py-2 text-sm text-red-400 hover:bg-red-950/40 disabled:opacity-50"
+                  >
+                    {deletingId === link.id
+                      ? "Deleting..."
+                      : "Delete"}
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}

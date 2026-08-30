@@ -1,33 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
+import SkillsClient from "@/components/admin/skills/SkillsClient";
 
-export default async function ProjectsPage() {
+export default async function SkillsPage() {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  const { data: skills, error } = await supabase
     .from("skills")
     .select("*")
+    .order("display_order", { ascending: true })
     .order("created_at", { ascending: false });
 
-  return (
-    <div>
-      <h1 className="text-3xl font-bold">Projects</h1>
-
-      {error ? (
+  if (error) {
+    return (
+      <div>
+        <h1 className="text-3xl font-bold">Skills</h1>
         <p className="mt-6 text-red-400">{error.message}</p>
-      ) : (
-        <div className="mt-8 space-y-3">
-          {data?.map((project) => (
-            <div
-              key={project.id}
-              className="rounded-xl border border-zinc-800 bg-zinc-950 p-5"
-            >
-              <pre className="overflow-auto text-sm text-zinc-400">
-                {JSON.stringify(project, null, 2)}
-              </pre>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
+
+  return <SkillsClient initialSkills={skills ?? []} />;
 }

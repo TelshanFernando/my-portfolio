@@ -1,33 +1,38 @@
 import { createClient } from "@/lib/supabase/server";
+import CertificationClient from "./CertificationClient";
 
-export default async function ProjectsPage() {
+export default async function CertificationsPage() {
   const supabase = await createClient();
-
   const { data, error } = await supabase
-    .from("certifications")//
+    .from("certifications")
     .select("*")
+    .order("display_order", { ascending: true })
     .order("created_at", { ascending: false });
 
-  return (
-    <div>
-      <h1 className="text-3xl font-bold">Projects</h1>
+  if (error) {
+    return (
+      <section
+        role="alert"
+        className="rounded-2xl border border-red-500/20 bg-red-500/10 p-5 text-red-300"
+      >
+        <h1 className="text-lg font-semibold">Unable to load certifications</h1>
+        <p className="mt-1 text-sm text-red-300/80">{error.message}</p>
+      </section>
+    );
+  }
 
-      {error ? (
-        <p className="mt-6 text-red-400">{error.message}</p>
-      ) : (
-        <div className="mt-8 space-y-3">
-          {data?.map((project) => (
-            <div
-              key={project.id}
-              className="rounded-xl border border-zinc-800 bg-zinc-950 p-5"
-            >
-              <pre className="overflow-auto text-sm text-zinc-400">
-                {JSON.stringify(project, null, 2)}
-              </pre>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+  return (
+    <section className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-white">
+          Certifications
+        </h1>
+        <p className="mt-1 text-sm text-zinc-400">
+          Add, edit, and manage the certifications displayed on your portfolio.
+        </p>
+      </div>
+
+      <CertificationClient initialCertifications={data ?? []} />
+    </section>
   );
 }

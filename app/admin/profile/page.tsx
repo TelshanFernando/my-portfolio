@@ -22,18 +22,7 @@ export default async function ProfilePage() {
     return (
       <div>
         <h1 className="text-3xl font-bold">Profile</h1>
-        <p className="mt-4 text-red-400">{error.message}</p>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div>
-        <h1 className="text-3xl font-bold">Profile</h1>
-        <p className="mt-4 text-yellow-400">
-          No profile exists for this account.
-        </p>
+        <p className="mt-4 text-red-400">Failed to load profile: {error.message}</p>
       </div>
     );
   }
@@ -45,7 +34,7 @@ export default async function ProfilePage() {
         Manage the information displayed on your portfolio.
       </p>
 
-      <ProfileForm profile={profile} />
+      <ProfileForm profile={profile ?? { id: user.id }} />
     </div>
   );
 }
