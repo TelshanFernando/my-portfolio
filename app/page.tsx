@@ -207,8 +207,7 @@ export default async function Home() {
                     src={String(profile.profile_image_url)}
                     alt={name}
                     loading="lazy"
-                    className="h-64 w-64 rounded-3xl border border-white/10 object-cover shadow-2xl sm:h-80 sm:w-80"
-                  />
+                  className="h-64 w-64 translate-y-3 rounded-3xl border border-white/10 object-cover shadow-2xl sm:h-80 sm:w-80"                  />
                 ) : (
                   <div className="flex h-64 w-64 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.03] text-6xl font-bold text-zinc-500 sm:h-80 sm:w-80">
                     {name.charAt(0).toUpperCase()}
