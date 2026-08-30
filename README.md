@@ -1,36 +1,185 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Personal Portfolio
 
-## Getting Started
+A modern, responsive personal portfolio website built with Next.js, React, TypeScript, Tailwind CSS, and Supabase.
 
-First, run the development server:
+The website presents my professional background, skills, projects, education, certifications, services, and contact information through a dynamic portfolio and admin dashboard.
 
-```bash
+✨ Features
+
+* Responsive personal portfolio website
+* Dynamic profile information
+* About Me section
+* Work experience section
+* Projects showcase
+* Skills section
+* Education history
+* Certifications
+* Services section
+* Contact form
+* Social media links
+* Resume management
+* Profile image management
+* Dynamic content powered by Supabase
+* Admin dashboard for managing portfolio content
+* SEO metadata
+* Sitemap and robots configuration
+
+🛠️ Technologies Used
+
+* Next.js – React framework for the web application
+* React – User interface development
+* TypeScript – Type-safe JavaScript
+* Tailwind CSS – Styling and responsive design
+* Supabase – Database and backend services
+* PostgreSQL – Database
+* Git & GitHub – Version control and source code management
+
+📁 Project Structure
+
+my-portfolio/
+├── app/
+│   ├── admin/
+│   │   ├── certifications/
+│   │   ├── education/
+│   │   ├── experience/
+│   │   ├── messages/
+│   │   ├── profile/
+│   │   ├── resumes/
+│   │   ├── services/
+│   │   ├── settings/
+│   │   ├── skills/
+│   │   └── social-links/
+│   ├── api/
+│   │   └── contact/
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── robots.ts
+│   └── sitemap.ts
+│
+├── components/
+│   ├── admin/
+│   ├── portfolio/
+│   └── ContactForm.tsx
+│
+├── lib/
+│   └── supabase/
+│
+├── public/
+│
+├── package.json
+└── README.md
+
+🚀 Getting Started
+
+1. Clone the repository
+
+git clone https://github.com/TelshanFernando/my-portfolio.git
+
+2. Navigate to the project
+
+cd my-portfolio
+
+3. Install dependencies
+
+npm install
+
+4. Configure environment variables
+
+Create a .env.local file in the project root.
+
+Add the required Supabase configuration:
+
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+If your application uses a Supabase service-role key, keep it server-side and never expose it in client-side code or commit it to GitHub.
+
+5. Start the development server
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🗄️ Supabase
 
-## Learn More
+The application uses Supabase to store and retrieve portfolio information such as:
 
-To learn more about Next.js, take a look at the following resources:
+* Profile
+* Education
+* Experience
+* Projects
+* Skills
+* Certifications
+* Services
+* Social links
+* Resumes
+* Contact messages
+* Site settings
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Portfolio content can be updated through the admin dashboard instead of manually changing the main portfolio page.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+🔐 Admin Dashboard
 
-## Deploy on Vercel
+The admin area provides management interfaces for the portfolio content.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Administrators can manage:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* Profile information
+* Profile image
+* Education
+* Experience
+* Projects
+* Skills
+* Certifications
+* Services
+* Social links
+* Resumes
+* Site settings
+* Contact messages
+
+📱 Responsive Design
+
+The portfolio is designed to work across:
+
+* Desktop
+* Laptop
+* Tablet
+* Mobile
+
+Tailwind CSS responsive utilities are used to adapt the layout and components to different screen sizes.
+
+🔧 Development Experience
+
+This project provided practical experience with:
+
+* Building applications with Next.js and React
+* Working with TypeScript
+* Creating responsive interfaces with Tailwind CSS
+* Connecting a frontend application to Supabase
+* Working with database-driven content
+* Building admin CRUD functionality
+* Handling image and file URLs
+* Creating API routes
+* Debugging frontend and database-related issues
+* Using Git and GitHub for version control
+* Deploying and maintaining a web application
+
+📌 Project Status
+
+Active personal project
+
+The project is being continuously improved with new features, UI updates, and bug fixes.
+
+👤 Author
+
+Telshan Fernando
+
+* GitHub: https://github.com/TelshanFernando
+* Portfolio: https://my-portfolio-ten-lilac-k1x0cb2icf.vercel.app
+
+📄 License
+
+This project is intended as a personal portfolio project.
