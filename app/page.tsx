@@ -49,7 +49,13 @@ export default async function Home() {
     supabase.from("certifications").select("*").order("display_order", { ascending: true }),
     supabase.from("services").select("*").order("display_order", { ascending: true }),
     supabase.from("social_links").select("*").order("display_order", { ascending: true }),
-    supabase.from("resumes").select("file_url, title").eq("is_active", true).maybeSingle(),
+    supabase
+      .from("resumes")
+      .select("file_url, title")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   const settings = settingsResult.data;
