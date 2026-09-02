@@ -73,13 +73,13 @@ export default async function Home() {
   const active = (item: Record<string, unknown>) => item.is_active !== false;
 
   const visibleExperience = experience.filter(visible);
-  const visibleProjects = projects.filter(visible);
+  const visibleProjects = projects.filter((item) => item.published !== false);
   const visibleSkills = skills.filter(active);
   const visibleEducation = education.filter(visible);
   const visibleCertifications = certifications.filter(visible);
   const visibleServices = services.filter(active);
   const visibleSocialLinks = socialLinks.filter((item) => item.visible !== false);
-  
+
   const name = String(profile?.full_name ?? settings?.site_name ?? "Your Name");
   const description = String(
     settings?.site_description ?? profile?.bio ?? ""
@@ -350,34 +350,70 @@ export default async function Home() {
 
             <div className="mt-12 grid gap-6 md:grid-cols-2">
               {visibleProjects.map((item) => {
-                const title = String(item.title ?? "Project");
-                const description = item.description ? String(item.description) : "";
-                const projectUrl = item.project_url ? String(item.project_url) : "";
-                const imageUrl = item.image_url ? String(item.image_url) : "";
+  const title = String(item.title ?? "Project");
+  const description = item.description ? String(item.description) : "";
+  const githubUrl = item.github_url ? String(item.github_url) : "";
+  const liveUrl = item.live_url ? String(item.live_url) : "";
+  const imageUrl = item.image_url ? String(item.image_url) : "";
 
-                return (
-                  <article key={String(item.id)} className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.04] transform-gpu [transform-style:preserve-3d] hover:[transform:translateY(-6px)_rotateX(1deg)] hover:shadow-2xl">
-                    {imageUrl ? (
-                      <div className="overflow-hidden">
-                        <img src={imageUrl} alt={title} loading="lazy" className="aspect-video w-full object-cover transition duration-500 group-hover:scale-105" />
-                      </div>
-                    ) : (
-                      <div className="flex aspect-video items-center justify-center border-b border-white/10 bg-white/[0.03]">
-                        <span className="text-sm text-zinc-600">No project image</span>
-                      </div>
-                    )}
-                    <div className="p-6 sm:p-7">
-                      <h3 className="text-xl font-semibold text-white">{title}</h3>
-                      {description && <p className="mt-3 leading-7 text-zinc-400">{description}</p>}
-                      {projectUrl && (
-                        <a href={projectUrl} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-white underline decoration-white/30 underline-offset-4 transition hover:decoration-white">
-                          View project <span aria-hidden="true">↗</span>
-                        </a>
-                      )}
-                    </div>
-                  </article>
-                );
-              })}
+  return (
+    <article
+      key={String(item.id)}
+      className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.04] transform-gpu [transform-style:preserve-3d] hover:[transform:translateY(-6px)_rotateX(1deg)] hover:shadow-2xl"
+    >
+      {imageUrl ? (
+        <div className="overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={title}
+            loading="lazy"
+            className="aspect-video w-full object-cover transition duration-500 group-hover:scale-105"
+          />
+        </div>
+      ) : (
+        <div className="flex aspect-video items-center justify-center border-b border-white/10 bg-white/[0.03]">
+          <span className="text-sm text-zinc-600">No project image</span>
+        </div>
+      )}
+
+      <div className="p-6 sm:p-7">
+        <h3 className="text-xl font-semibold text-white">{title}</h3>
+
+        {description && (
+          <p className="mt-3 leading-7 text-zinc-400">{description}</p>
+        )}
+
+        {(githubUrl || liveUrl) && (
+          <div className="mt-6 flex flex-wrap gap-3">
+            {githubUrl && (
+              <a
+                href={githubUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-sm font-medium text-white transition hover:border-white/30 hover:bg-white/10"
+              >
+                GitHub
+                <span aria-hidden="true">↗</span>
+              </a>
+            )}
+
+            {liveUrl && (
+              <a
+                href={liveUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-zinc-200"
+              >
+                Live Demo
+                <span aria-hidden="true">↗</span>
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    </article>
+  );
+})}
             </div>
           </div>
         </section>
