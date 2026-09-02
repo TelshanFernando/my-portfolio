@@ -89,8 +89,8 @@ export default function SocialLinkForm({
 
         <Field
           label="Icon"
-          name="icon"
-          defaultValue={socialLink?.icon ?? ""}
+          name="icon_name"
+          defaultValue={socialLink?.icon_name ?? ""}
           placeholder="github"
         />
 

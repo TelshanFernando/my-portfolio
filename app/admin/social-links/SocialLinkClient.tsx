@@ -9,7 +9,7 @@ export type SocialLink = {
   id: string;
   platform: string;
   url: string;
-  icon: string | null;
+  icon_name: string | null;
   display_order: number;
   visible: boolean;
 };

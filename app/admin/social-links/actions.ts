@@ -36,9 +36,11 @@ export async function createSocialLink(
   const supabase = await createClient();
 
   const platform = String(form.get("platform") ?? "").trim();
-  const url = String(form.get("url") ?? "").trim();
-  const display = Number(form.get("display") ?? 0) || 0;
-  const visible = form.get("visible") === "on";
+const url = String(form.get("url") ?? "").trim();
+const icon = String(form.get("icon") ?? "").trim() || null;
+const displayOrder = Number(form.get("display_order") ?? 0) || 0;
+const visible = form.get("visible") === "on";
+const iconName = String(form.get("icon_name") ?? "").trim() || null;
 
   if (!platform) {
     return { error: "Platform is required." };
@@ -53,7 +55,8 @@ export async function createSocialLink(
     .insert({
       platform,
       url,
-      display_order: display,
+      icon,
+      display_order: displayOrder,
       visible,
     })
     .select("*")
@@ -62,6 +65,7 @@ export async function createSocialLink(
   if (error) {
     return { error: error.message };
   }
+
   if (!data) {
     return { error: "Social link was not created." };
   }
@@ -84,9 +88,10 @@ export async function updateSocialLink(
   const supabase = await createClient();
 
   const platform = String(form.get("platform") ?? "").trim();
-  const url = String(form.get("url") ?? "").trim();
-  const display = Number(form.get("display") ?? 0) || 0;
-  const visible = form.get("visible") === "on";
+const url = String(form.get("url") ?? "").trim();
+const icon = String(form.get("icon") ?? "").trim() || null;
+const displayOrder = Number(form.get("display_order") ?? 0) || 0;
+const visible = form.get("visible") === "on";
 
   if (!platform) {
     return { error: "Platform is required." };
@@ -101,7 +106,8 @@ export async function updateSocialLink(
     .update({
       platform,
       url,
-      display_order: display,
+      icon,
+      display_order: displayOrder,
       visible,
     })
     .eq("id", id)
@@ -111,8 +117,11 @@ export async function updateSocialLink(
   if (error) {
     return { error: error.message };
   }
+
   if (!data) {
-    return { error: "Social link was not found or could not be updated." };
+    return {
+      error: "Social link was not found or could not be updated.",
+    };
   }
 
   revalidatePath("/admin/social-links");
