@@ -78,8 +78,8 @@ export default async function Home() {
   const visibleEducation = education.filter(visible);
   const visibleCertifications = certifications.filter(visible);
   const visibleServices = services.filter(active);
-  const visibleSocialLinks = socialLinks.filter(active);
-
+  const visibleSocialLinks = socialLinks.filter((item) => item.visible !== false);
+  
   const name = String(profile?.full_name ?? settings?.site_name ?? "Your Name");
   const description = String(
     settings?.site_description ?? profile?.bio ?? ""
