@@ -175,8 +175,8 @@ export default async function Home() {
                       rel="noreferrer"
                       className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,0,0,0.15)] backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30 sm:px-7"
                     >
-                      <span aria-hidden="true" className="mr-2">↓</span>
-                      {String(resume.title ?? "View Resume")}
+                      <span aria-hidden="true" className="mr-2">→</span>
+                      View {String(resume.title ?? "Resume")}
                     </a>
                   )}
                 </div>
