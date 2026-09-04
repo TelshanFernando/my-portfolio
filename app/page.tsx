@@ -79,6 +79,12 @@ export default async function Home() {
   const visibleCertifications = certifications.filter(visible);
   const visibleServices = services.filter(active);
   const visibleSocialLinks = socialLinks.filter((item) => item.visible !== false);
+  const whatsappNumber = profile?.phone
+    ? String(profile.phone).replace(/\D/g, "")
+    : "";
+  const hasWhatsAppLink = visibleSocialLinks.some(
+    (item) => String(item.platform ?? item.name ?? "").toLowerCase() === "whatsapp"
+  );
 
   const name = String(profile?.full_name ?? settings?.site_name ?? "Your Name");
   const description = String(
@@ -650,6 +656,16 @@ export default async function Home() {
                 {String(item.platform ?? item.name ?? "Social")}
               </a>
             ))}
+            {whatsappNumber && !hasWhatsAppLink && (
+              <a
+                href={`https://wa.me/${whatsappNumber}`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/10 px-4 py-2 text-xs text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+              >
+                WhatsApp
+              </a>
+            )}
             <a href="#top" className="rounded-full border border-white/10 px-4 py-2 text-xs text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white">
               Back to top ↑
             </a>
