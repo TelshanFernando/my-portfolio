@@ -79,12 +79,10 @@ export default async function Home() {
   const visibleCertifications = certifications.filter(visible);
   const visibleServices = services.filter(active);
   const visibleSocialLinks = socialLinks.filter((item) => item.visible !== false);
-  const whatsappNumber = profile?.phone
-    ? String(profile.phone).replace(/\D/g, "")
-    : "";
-  const hasWhatsAppLink = visibleSocialLinks.some(
-    (item) => String(item.platform ?? item.name ?? "").toLowerCase() === "whatsapp"
+  const nonWhatsAppSocialLinks = visibleSocialLinks.filter(
+    (item) => String(item.platform ?? item.name ?? "").toLowerCase() !== "whatsapp"
   );
+  const whatsappUrl = "https://wa.me/94740823773";
 
   const name = String(profile?.full_name ?? settings?.site_name ?? "Your Name");
   const description = String(
@@ -613,16 +611,14 @@ export default async function Home() {
                 </a>
               )}
 
-              {whatsappNumber && !hasWhatsAppLink && (
-                <a
-                  href={`https://wa.me/${whatsappNumber}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-4 inline-flex rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
-                >
-                  WhatsApp
-                </a>
-              )}
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+              >
+                WhatsApp
+              </a>
 
               {profile?.location && (
                 <p className="mt-3 text-zinc-500">{String(profile.location)}</p>
@@ -630,7 +626,7 @@ export default async function Home() {
 
               {visibleSocialLinks.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-3">
-                  {visibleSocialLinks.map((item) => (
+                  {nonWhatsAppSocialLinks.map((item) => (
                     <a
                       key={String(item.id)}
                       href={String(item.url ?? "#")}
@@ -656,7 +652,7 @@ export default async function Home() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {visibleSocialLinks.map((item) => (
+            {nonWhatsAppSocialLinks.map((item) => (
               <a
                 key={String(item.id)}
                 href={String(item.url ?? "#")}
@@ -667,16 +663,14 @@ export default async function Home() {
                 {String(item.platform ?? item.name ?? "Social")}
               </a>
             ))}
-            {whatsappNumber && !hasWhatsAppLink && (
-              <a
-                href={`https://wa.me/${whatsappNumber}`}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-white/10 px-4 py-2 text-xs text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
-              >
-                WhatsApp
-              </a>
-            )}
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-white/10 px-4 py-2 text-xs text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+            >
+              WhatsApp
+            </a>
             <a href="#top" className="rounded-full border border-white/10 px-4 py-2 text-xs text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white">
               Back to top ↑
             </a>
