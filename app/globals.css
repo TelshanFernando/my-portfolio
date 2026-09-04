@@ -34,3 +34,18 @@ body {
 * {
   box-sizing: border-box;
 }
+
+.resume-guide-popover {
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.resume-guide-popover--closing {
+  opacity: 0;
+  transform: translateY(4px) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resume-guide-popover {
+    transition: none;
+  }
+}

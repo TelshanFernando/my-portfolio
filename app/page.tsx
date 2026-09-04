@@ -44,7 +44,11 @@ export default async function Home() {
     supabase.from("site_settings").select("*").maybeSingle(),
     supabase.from("profiles").select("*").maybeSingle(),
     supabase.from("education").select("*").order("display_order", { ascending: true }),
-    supabase.from("experience").select("*").order("display_order", { ascending: true }),
+    supabase
+      .from("experience")
+      .select("*")
+      .order("display_order", { ascending: true })
+      .order("start_date", { ascending: true }),
     supabase.from("projects").select("*").order("display_order", { ascending: true }),
     supabase.from("skills").select("*").order("display_order", { ascending: true }),
     supabase.from("certifications").select("*").order("display_order", { ascending: true }),
@@ -314,15 +318,32 @@ export default async function Home() {
               <div className="absolute bottom-0 left-[7px] top-0 w-px bg-white/10" />
               <div className="space-y-10">
                 {visibleExperience.map((item) => {
-                  const jobTitle = String(item.job_title ?? item.title ?? "Experience");
-                  const company = String(item.company ?? item.organization ?? "");
+                  const jobTitle = String(item.position ?? item.job_title ?? item.title ?? "Position");
+                  const company = String(item.company_name ?? item.company ?? item.organization ?? "");
+                  const location = item.location ? String(item.location) : "";
+                  const currentPosition = item.current_position === true;
+                  const formatList = (value: unknown) => {
+                    if (Array.isArray(value)) return value.map(String).filter(Boolean);
+                    if (typeof value !== "string" || !value.trim()) return [];
+                    try {
+                      const parsed = JSON.parse(value);
+                      if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
+                    } catch {
+                      // Plain text values are supported below.
+                    }
+                    return value.split(/[,\n]/).map((entry) => entry.trim()).filter(Boolean);
+                  };
+                  const responsibilities = formatList(item.responsibilities);
+                  const technologies = formatList(item.technologies);
                   const startDate = item.start_date
                     ? new Date(String(item.start_date)).toLocaleDateString(undefined, { month: "short", year: "numeric" })
                     : "";
                   const endDate = item.end_date
                     ? new Date(String(item.end_date)).toLocaleDateString(undefined, { month: "short", year: "numeric" })
                     : "";
-                  const dateRange = startDate || endDate ? `${startDate || "Start"} — ${endDate || "Present"}` : "";
+                  const dateRange = startDate || endDate || currentPosition
+                    ? `${startDate || "Start"} — ${currentPosition ? "Present" : endDate || "Present"}`
+                    : "";
 
                   return (
                     <article key={String(item.id)} className="relative pl-10 transform-gpu [transform-style:preserve-3d] hover:[transform:translateY(-4px)_rotateX(1deg)] hover:shadow-2xl">
@@ -332,10 +353,27 @@ export default async function Home() {
                           <div>
                             <h3 className="text-xl font-semibold text-white">{jobTitle}</h3>
                             {company && <p className="mt-1 text-zinc-400">{company}</p>}
+                            {location && <p className="mt-1 text-sm text-zinc-500">{location}</p>}
                           </div>
                           {dateRange && <span className="shrink-0 rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-400">{dateRange}</span>}
                         </div>
                         {item.description && <p className="mt-5 max-w-3xl whitespace-pre-line text-sm leading-7 text-zinc-400">{String(item.description)}</p>}
+                        {responsibilities.length > 0 && (
+                          <div className="mt-6">
+                            <h4 className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Responsibilities</h4>
+                            <ul className="mt-3 space-y-2 text-sm leading-6 text-zinc-400">
+                              {responsibilities.map((responsibility, index) => <li key={`${responsibility}-${index}`} className="flex gap-3"><span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-500" />{responsibility}</li>)}
+                            </ul>
+                          </div>
+                        )}
+                        {technologies.length > 0 && (
+                          <div className="mt-6">
+                            <h4 className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Technologies</h4>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {technologies.map((technology, index) => <span key={`${technology}-${index}`} className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-zinc-300">{technology}</span>)}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </article>
                   );

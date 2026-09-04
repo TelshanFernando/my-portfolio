@@ -48,6 +48,7 @@ export default function PortfolioGuide() {
   const [quests, setQuests] = useState<QuestState>(emptyQuests);
   const [panelOpen, setPanelOpen] = useState(false);
   const tourRef = useRef<ReturnType<typeof driver> | null>(null);
+  const resumeGuideRef = useRef<ReturnType<typeof driver> | null>(null);
 
   useEffect(() => {
     const savedOnboarding = readStorage<string>(ONBOARDING_KEY, "not_started");
@@ -96,7 +97,11 @@ export default function PortfolioGuide() {
       const target = event.target instanceof Element ? event.target : null;
       if (!target) return;
       if (target.closest("[data-quest-project]")) markQuest("projects");
-      if (target.closest("[data-quest-resume]")) markQuest("resume");
+      if (target.closest("[data-quest-resume]")) {
+        markQuest("resume");
+        document.querySelector(".resume-guide-popover")?.classList.add("resume-guide-popover--closing");
+        window.setTimeout(() => resumeGuideRef.current?.destroy(), 220);
+      }
     };
     document.addEventListener("click", handleAction);
 
@@ -130,6 +135,9 @@ export default function PortfolioGuide() {
       smoothScroll: true,
       animate: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
       steps: availableSteps,
+      onHighlighted: (element) => {
+        if (element?.id === "projects") completeQuest("projects");
+      },
       onNextClick: (_element, _step, options) => {
         if (options.state.activeIndex === availableSteps.length - 1) {
           setOnboarding("completed");
@@ -177,10 +185,11 @@ export default function PortfolioGuide() {
     if (selector === "#resume-button") {
       window.setTimeout(() => {
         if (!document.querySelector(selector)) return;
-        driver({
+        resumeGuideRef.current = driver({
           allowClose: true,
           smoothScroll: true,
           animate: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+          popoverClass: "resume-guide-popover",
           steps: [{
             element: selector,
             popover: {
@@ -189,7 +198,11 @@ export default function PortfolioGuide() {
               doneBtnText: "Got it",
             },
           }],
-        }).drive();
+          onDestroyed: () => {
+            window.setTimeout(() => setPanelOpen(false), 220);
+          },
+        });
+        resumeGuideRef.current.drive();
       }, 500);
     }
   }
@@ -219,7 +232,7 @@ export default function PortfolioGuide() {
           <div className="flex items-start justify-between border-b border-white/10 p-5"><div><p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Professional journey</p><h2 className="mt-1 text-lg font-semibold text-white">Portfolio exploration</h2></div><button type="button" onClick={() => setPanelOpen(false)} aria-label="Minimize exploration panel" className="rounded-full p-1 text-zinc-500 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40">×</button></div>
           <div className="p-5">
             {allComplete ? (
-              <div><p className="text-sm font-medium text-emerald-300">Portfolio exploration complete, Sir/Madam.</p><p className="mt-2 text-sm leading-6 text-zinc-400">You have reviewed the key evidence across my professional profile. If my background aligns with your requirements, I would be pleased to hear from you.</p><div className="mt-4 flex flex-wrap gap-2"><a href="#contact" onClick={() => setPanelOpen(false)} className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-zinc-200">Contact me</a><button type="button" onClick={resetExploration} className="rounded-full border border-white/15 px-4 py-2 text-sm text-white transition hover:bg-white/10">Restart</button></div></div>
+              <div><p className="text-sm font-medium text-emerald-300">Portfolio exploration complete, Sir/Madam.</p><p className="mt-2 text-sm leading-6 text-zinc-400">You have reviewed the key evidence across my professional profile. If my background aligns with your requirements, I would be pleased to hear from you.</p><div className="mt-4 flex flex-wrap gap-2"><a href="#contact" onClick={() => setPanelOpen(false)} className="rounded-full border border-white/15 px-4 py-2 text-sm text-white transition hover:bg-white/10">Contact me</a><button type="button" onClick={resetExploration} className="rounded-full border border-white/15 px-4 py-2 text-sm text-white transition hover:bg-white/10">Restart</button></div></div>
             ) : (
               <><div className="flex items-center justify-between text-xs text-zinc-400"><span>Career discovery journey</span><span>{completedCount} of {questDetails.length}</span></div><div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10" aria-label={`${completedCount} of ${questDetails.length} quests completed`} role="progressbar" aria-valuemin={0} aria-valuemax={questDetails.length} aria-valuenow={completedCount}><div className="h-full rounded-full bg-emerald-300 transition-all duration-500" style={{ width: `${(completedCount / questDetails.length) * 100}%` }} /></div><ul className="mt-4 space-y-2">{questDetails.filter((quest) => !quests[quest.key]).map((quest) => <li key={quest.key}><button type="button" onClick={() => guideToQuest(quest.selector, quest.key)} className="w-full rounded-xl border border-white/10 bg-white/[0.02] px-3 py-3 text-left transition hover:border-white/25 hover:bg-white/[0.06] focus:outline-none focus:ring-2 focus:ring-white/40"><div className="flex items-start gap-3"><span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/20 text-xs text-transparent" aria-hidden="true">✓</span><div><p className="text-sm text-zinc-200">{quest.title}</p><p className="mt-0.5 text-xs text-zinc-500">{quest.target}</p></div></div></button></li>)}</ul><div className="mt-4 flex items-center justify-between gap-3"><button type="button" onClick={startTour} className="text-sm text-zinc-400 underline decoration-white/20 underline-offset-4 hover:text-white">Restart tour</button><button type="button" onClick={resetExploration} className="text-xs text-zinc-600 hover:text-zinc-300">Reset progress</button></div></>
             )}
