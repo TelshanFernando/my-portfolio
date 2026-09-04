@@ -2,6 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/components/portfolio/Navbar";
 import ContactForm from "@/components/ContactForm";
+import PortfolioGuide from "@/components/portfolio/PortfolioGuide";
 
 export async function generateMetadata() {
   const supabase = await createClient();
@@ -175,6 +176,8 @@ export default async function Home() {
                   {resume?.file_url && (
                     <a
                       href={String(resume.file_url)}
+                      id="resume-button"
+                      data-quest-resume="true"
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,0,0,0.15)] backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30 sm:px-7"
@@ -362,6 +365,7 @@ export default async function Home() {
 
   return (
     <article
+      data-quest-project="true"
       key={String(item.id)}
       className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.04] transform-gpu [transform-style:preserve-3d] hover:[transform:translateY(-6px)_rotateX(1deg)] hover:shadow-2xl"
     >
@@ -674,6 +678,7 @@ export default async function Home() {
           </div>
         </div>
       </footer>
+      <PortfolioGuide />
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.035),transparent_38%)]" />
         <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] [background-size:72px_72px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
