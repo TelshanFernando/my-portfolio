@@ -611,34 +611,31 @@ export default async function Home() {
                 </a>
               )}
 
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 inline-flex rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
-              >
-                WhatsApp
-              </a>
-
               {profile?.location && (
                 <p className="mt-3 text-zinc-500">{String(profile.location)}</p>
               )}
 
-              {visibleSocialLinks.length > 0 && (
-                <div className="mt-8 flex flex-wrap gap-3">
-                  {nonWhatsAppSocialLinks.map((item) => (
-                    <a
-                      key={String(item.id)}
-                      href={String(item.url ?? "#")}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
-                    >
-                      {String(item.platform ?? item.name ?? "Social")}
-                    </a>
-                  ))}
-                </div>
-              )}
+              <div className="mt-8 flex flex-wrap gap-3">
+                {nonWhatsAppSocialLinks.map((item) => (
+                  <a
+                    key={String(item.id)}
+                    href={String(item.url ?? "#")}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+                  >
+                    {String(item.platform ?? item.name ?? "Social")}
+                  </a>
+                ))}
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+                >
+                  WhatsApp
+                </a>
+              </div>
             </div>
           </div>
         </div>
